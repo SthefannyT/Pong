@@ -1,0 +1,145 @@
+//variáveis da bolinha
+let xBolinha = 100; // Cria a variável de configuração da bolinha em relação ao eixo x
+let yBolinha = 200; // Cria a variável de configuração da bolinha em relação ao eixo y
+let diametro = 20; //Cria a variável de configuração de diâmetro que a bolinha deverá ter em pixels
+let raio = diametro / 2; //Cria a variável de configuração do cálculo para definição do raio da bolinha
+
+//variáveis do oponente
+let xRaqueteOponente = 585; //Cria a variável de configuração da raquete do oponente em relação ao eixo x
+let yRaqueteOponente = 150; //Cria a variável de configuração da raquete do oponente em relação ao eixo y
+
+//velocidade da bolinha
+let velocidadeXBolinha = 6; //Cria a variável de configuração de velocidade da bolinha em relação ao eixo x
+let velocidadeYBolinha = 6; //Cria a variável de configuração de velocidade da bolinha em relação ao eixo y
+
+//variáveis da raquete
+let xRaquete = 5; //Cria a variável de configuração da raquete em relação ao eixo x
+let yRaquete = 150; //Cria a variável de configuração da raquete em relação ao eixo y
+let raqueteComprimento = 10; //Cria a variável de configuração do comprimento da raquete 
+let raqueteAltura = 90; //Cria a variável de configuração da altura da raquete 
+
+//placar do jogo
+let meusPontos = 0; //Cria a variável de contagem de pontos do jogador
+let pontosDoOponente = 0; //Cria a variável de contagem de pontos do oponente
+
+
+//sons do jogo
+let raquetada; //Cria a variável de som para o movimento da raquete (colisão da raquete com a bolinha)
+let ponto; //Cria a variável de som para contagem de pontos (ponto feito)
+let trilha; // Cria a variável de som de fundo para o jogo no geral (trilha de fundo)
+
+let colidiu = false; //Cria uma variável booleana de true/false. Se a bolinha colidir com as bordas ou a raquete a variável acusará true e se não colidir, false
+
+function setup() {
+  createCanvas(600, 400); //Cria um canvas (tela) com largura de 600 pixels e altura de 400 pixels.
+    trilha.loop(); //implementa o som de fundo em repetição contínua
+}
+
+function draw() {
+    background(0); // Define o fundo do canvas na cor preta.
+    mostraBolinha(); // Chama a função que mostra a bolinha no canvas
+    movimentaBolinha(); // Chama a função que movimenta a bolinha no canvas
+    verificaColisaoBorda(); // Chama a função que verifica a colisão da bolinha com as bordas
+    mostraRaquete(xRaquete, yRaquete); // Chama a função mostrar raquete no canvas
+    movimentaMinhaRaquete(); // Chama a função de movimentar a raquete do jogador no canvas
+    verificaColisaoRaquete(xRaquete, yRaquete); // Chama a função que verifica a colisão da bolinha com a raquete do jogador
+    verificaColisaoRaquete(xRaqueteOponente, yRaqueteOponente);// Chama a função que verifica a colisão da bolinha com a raquete do oponente
+    mostraRaquete(xRaqueteOponente, yRaqueteOponente); // Chama a função mostrar raquete do oponente no canvas
+    movimentaRaqueteOponente(); // Chama a função de movimentar a raquete do oponente no canvas
+    incluiPlacar() //Chama a função que inclui o placar do jogo
+    marcaPonto(); // Chama a função que determina a marcação de pontos
+}
+function mostraBolinha() {
+  circle(xBolinha, yBolinha, diametro); //Função de mostrar a bolinha com as configurações definidas por variáveis 
+}
+
+function movimentaBolinha() { //Função que movimenta a bolinha
+  xBolinha += velocidadeXBolinha; //Agrega a velocidade da bolinha à posição da bolinha em relação ao eixo x, movendo a bolinha de posição de acordo com as variáveis definidas
+  yBolinha += velocidadeYBolinha; //Agrega a velocidade da bolinha à posição da bolinha em relação ao eixo y, movendo a bolinha de posição de acordo com as variáveis definidas
+}
+
+function verificaColisaoBorda() { // Função que verifica a colisão da bolinha com a borda e inverte sua direção
+  if (xBolinha + raio > width || xBolinha - raio < 0) { //Verifica se a posição da bolinha em x junto com seu raio ultrapassa a largura da tela
+    velocidadeXBolinha *= -1; //caso ultrapasse multiplicamos a velocidade da bolinha por -1, invertendo sua direção
+  }
+  if (yBolinha + raio > height || yBolinha - raio < 0) { //Verifica se a posição da bolinha em y junto com seu raio ultrapassa a altura da tela
+    velocidadeYBolinha *= -1; //caso ultrapasse multiplicamos a velocidade da bolinha por -1, invertendo sua direção
+  }
+  }
+
+
+function mostraRaquete(x,y) {
+    rect(x, y, raqueteComprimento, raqueteAltura); //Função de mostrar a raquete com as configurações definidas por variáveis 
+}
+
+function movimentaMinhaRaquete() { //Função que movimenta a raquete quando as teclas para cima e para baixo estão pressionadas
+  if(keyIsDown(UP_ARROW)) { //Movimenta a raquete para cima sempre que a tecla para cima for pressionada (para movimentar para cima subtraímos 1 a posição do eixo y)
+    yRaquete -= 10;
+  }
+  if(keyIsDown(DOWN_ARROW)) { //Movimenta a raquete para baixo sempre que a tecla para baixo for pressionada (para movimentar para baixo adicionamos 1 a posição do eixo y)
+    yRaquete += 10;
+  }
+}
+
+function verificaColisaoRaquete() { // Função que verifica a colisão da bolinha com a raquete e inverte sua direção
+  if (xBolinha - raio < xRaquete + raqueteComprimento && yBolinha - raio < yRaquete + raqueteAltura && yBolinha + raio > yRaquete) { //Verifica se a posição da bolinha em x e y junto com seu raio ultrapassa a posição da raquete com seu comprimeto e altura
+  }
+    velocidadeXBolinha *= -1; //caso ultrapasse multiplicamos a velocidade da bolinha por -1, invertendo sua direção
+     raquetada.play(); //implementa o som da  raquetada se a posição da bolinha em x e y junto com seu raio ultrapassa a posição da raquete com seu comprimeto e altura
+  }
+
+
+function verificaColisaoRaquete(x, y) { // função que verifica definitivamente a colisão da bolinha com a raquete e inverte sua posição
+    colidiu = collideRectCircle(x, y, raqueteComprimento, raqueteAltura, xBolinha, yBolinha, raio); //Chama a variável colidiu para atribuição do resultado dessa função
+    if (colidiu){ //Cria a condição de que se a variável colidiu apresentar resultado true inverte a posição da bolinha
+        velocidadeXBolinha *= -1; //Se der true na variável colidiu inverte a posição da bolinha
+        raquetada.play(); //implementa o som da  raquetada se der true na variável colidiu inverte a posição da bolinha
+  }
+}
+
+function movimentaRaqueteOponente(){ //Função para movimentar a raquete do oponente
+    if (keyIsDown(87)){ //Movimenta a raquete do oponente para cima sempre que a tecla W (posição87) for pressionada (para movimentar para cima subtraímos 10 a posição do eixo y)
+        yRaqueteOponente -= 10;
+    }
+    if (keyIsDown(83)){ //Movimenta a raquete do oponente para baixo sempre que a tecla S (posição83) for pressionada (para movimentar para baixo adicionamos 10 a posição do eixo y)
+        yRaqueteOponente += 10;
+    }
+}
+
+
+function incluiPlacar(){ //Função que cria o placar do jogo
+  stroke(255) //Define a cor da borda do placar como branca
+    textAlign(CENTER); //Define a posição do texto no placar como central
+    textSize(16); //Define o tamanho da fonte utilizada para determinar o placar como 16
+    fill(color(255,140, 0)); //Define a cor do preenchimento do placar como laranja
+    rect(150, 10, 40, 20); // Define a forma geométrica de retângulo para o placas com a definição de seus parâmetros
+    fill(255); //Define a cor do texto no placar como branco
+    text(meusPontos, 170, 26); //Determina a contagem de pontos atribuindo à variável meusPontos e a posição em que o placar aparecerá em relação aos eixos x e y
+    fill(color(255,140, 0)); //Define a cor do preenchimento do placar como laranja
+    rect(450, 10, 40, 20); // Define a forma geométrica de retângulo para o placas com a definição de seus parâmetros
+    fill(255); //Define a cor do texto no placar como branco
+    text(pontosDoOponente, 470, 26); //Determina a contagem de pontos atribuindo à variável pontosDoOponente e a posição em que o placar aparecerá em relação aos eixos x e y
+
+
+
+}
+
+
+function marcaPonto() { //Função de marcação de pontos
+    if (xBolinha > 590) {//Cria a condição que se a posição da bolinha em relação ao eixo x for maoir que 590 o jogador marca ponto
+        meusPontos += 1; //se a posição da bolinha em relação ao eixo x for maoir que 590 o jogador marca ponto adicionando 1 à variável meusPontos 
+        ponto.play();  //implementa o som de ponto feito se se a posição da bolinha em relação ao eixo x for maoir que 590
+    }
+    if (xBolinha < 10) { //Cria a condição que se a posição da bolinha em relação ao eixo x for menor que 10 o oponente marca ponto
+        pontosDoOponente += 1; //se a posição da bolinha em relação ao eixo x for menor que 10 o oponente marca ponto adicionando 1 à variável pontosDoOponente
+        ponto.play(); //implementa o som de ponto feito se a posição da bolinha em relação ao eixo x for menor que 10
+    }
+}
+
+
+function preload(){ //Função que carrega as bibliotecas de sons
+  trilha = loadSound("trilha.mp3"); //Carrega o som da trilha de fundo do jogo
+  ponto = loadSound("ponto.mp3"); //Carrega o som do ponto feito
+  raquetada = loadSound("raquetada.mp3"); //Carrega o som da raquete colidindo com a bolinha
+}
+
